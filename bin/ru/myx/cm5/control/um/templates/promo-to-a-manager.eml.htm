@@ -1,0 +1,12 @@
+A new user has been promoted:<br>
+
+<table border=0>
+<tr><td align=right>User ID:</td><td align=left><%=Flags.userid%></td></tr>
+<tr><td align=right>Login:</td><td align=left><%=Flags.login%></td></tr>
+<tr><td align=right>Email:</td><td align=left><a href="mailto:<%=Flags.email%>"><%=Flags.email%></a></td></tr>
+<tr><td align=right>View/Edit URL:</td><td align=left><a href="<%=Application.SiteRoot%>Admin/show-listing,ehook?path=/UsMan/users/&filter=<%=Flags.email%>:email">Click here</a></td></tr>
+<tr><td colspan=2><hr></td></tr>
+<tr><td align=right>Promoter ID:</td><td align=left><%=Flags.registrarID%></td></tr>
+<tr><td align=right>Promoter Name:</td><td align=left><%=Flags.registrarName%></td></tr>
+<tr><td align=right>Promoter Email:</td><td align=left><a href="mailto:<%=Flags.registrarEmail%>"><%=Flags.registrarEmail%></a></td></tr>
+</table>
