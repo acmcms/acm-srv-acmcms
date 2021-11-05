@@ -76,7 +76,7 @@ public class FormAllShares extends AbstractForm<FormAllShares> {
 												"ru",
 												"ВНИМАНИЕ: чтобы указанные имена были доступны пользователям сайта они должны быть зарегистрированны на сервере DNS.")))
 						.setAttribute("content_fieldset", FormAllShares.FIELDSET_SHARE_LIST)
-						.setAttribute("content_handler", new BaseFunctionActAbstract<Void, ContainerAllShares>(Void.class, ContainerAllShares.class) {
+						.setAttribute("content_handler", new BaseFunctionActAbstract<>(Void.class, ContainerAllShares.class) {
 							
 							@Override
 							public ContainerAllShares apply(final Void listing) {

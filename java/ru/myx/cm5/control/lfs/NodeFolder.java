@@ -35,7 +35,7 @@ import ru.myx.ae3.vfs.TreeReadType;
  */
 class NodeFolder extends AbstractNode {
 	
-	private static final Comparator<ControlBasic<?>> COMPARATOR_CTRLBASIC_KEY_ASC = new Comparator<ControlBasic<?>>() {
+	private static final Comparator<ControlBasic<?>> COMPARATOR_CTRLBASIC_KEY_ASC = new Comparator<>() {
 		
 		@Override
 		public final int compare(final ControlBasic<?> o1, final ControlBasic<?> o2) {

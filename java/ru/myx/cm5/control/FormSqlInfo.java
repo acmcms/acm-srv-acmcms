@@ -1,6 +1,6 @@
 /*
  * Created on 17.04.2004
- * 
+ *
  * To change the template for this generated file go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Enumeration;
 
 import ru.myx.ae1.control.MultivariantString;
-import ru.myx.ae3.base.Base;
 import ru.myx.ae3.base.BaseNativeObject;
 import ru.myx.ae3.base.BaseObject;
 import ru.myx.ae3.control.AbstractForm;
@@ -21,33 +20,28 @@ import ru.myx.ae3.control.field.ControlFieldFactory;
 import ru.myx.ae3.control.fieldset.ControlFieldset;
 import ru.myx.ae3.help.Format;
 
-/**
- * @author myx
- * 
+/** @author myx
+ *
  *         To change the template for this generated type comment go to
- *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments */
 final class FormSqlInfo extends AbstractForm<FormSqlInfo> {
-	private static final ControlFieldset<?>	FIELDSET	= ControlFieldset.createFieldset()
-																.addField( ControlFieldFactory.createFieldMap( "data",
-																		MultivariantString.getString( "Data",
-																				Collections.singletonMap( "ru",
-																						"Данные" ) ),
-																		null ) );
 	
-	private final Enumeration<Connection>	source;
-	
+	private static final ControlFieldset<?> FIELDSET = ControlFieldset.createFieldset()
+			.addField(ControlFieldFactory.createFieldMap("data", MultivariantString.getString("Data", Collections.singletonMap("ru", "Данные")), null));
+
+	private final Enumeration<Connection> source;
+
 	FormSqlInfo(final String alias, final Enumeration<Connection> source) {
+		
 		this.source = source;
-		this.setAttributeIntern( "id", alias + "_info" );
-		this.setAttributeIntern( "title",
-				MultivariantString.getString( "Connection info: " + alias,
-						Collections.singletonMap( "ru", "Информация о соединении: " + alias ) ) );
+		this.setAttributeIntern("id", alias + "_info");
+		this.setAttributeIntern("title", MultivariantString.getString("Connection info: " + alias, Collections.singletonMap("ru", "Информация о соединении: " + alias)));
 		this.recalculate();
 	}
-	
+
 	@Override
 	public BaseObject getData() {
+		
 		final BaseObject data = new BaseNativeObject();
 		try (final Connection conn = this.source.nextElement()) {
 			final DatabaseMetaData metaData = conn.getMetaData();
@@ -64,8 +58,8 @@ final class FormSqlInfo extends AbstractForm<FormSqlInfo> {
 			data.baseDefine("Database product version", metaData.getDatabaseProductVersion());
 			data.baseDefine("Driver name", metaData.getDriverName());
 			data.baseDefine("Driver version", metaData.getDriverVersion());
-			data.baseDefine("Driver major version", (long) metaData.getDriverMajorVersion());
-			data.baseDefine("Driver minor version", (long) metaData.getDriverMinorVersion());
+			data.baseDefine("Driver major version", metaData.getDriverMajorVersion());
+			data.baseDefine("Driver minor version", metaData.getDriverMinorVersion());
 			data.baseDefine("Storage: Uses local files", metaData.usesLocalFiles());
 			data.baseDefine("Storage: Uses local file per table", metaData.usesLocalFilePerTable());
 			data.baseDefine("Supports mixed-case identifiers", metaData.supportsMixedCaseIdentifiers());
@@ -140,28 +134,28 @@ final class FormSqlInfo extends AbstractForm<FormSqlInfo> {
 			data.baseDefine("Supports open cursors across rollback", metaData.supportsOpenCursorsAcrossRollback());
 			data.baseDefine("Supports open statements across commit", metaData.supportsOpenStatementsAcrossCommit());
 			data.baseDefine("Supports open statements across rollback", metaData.supportsOpenStatementsAcrossRollback());
-			data.baseDefine("Max binary literal length", (long) metaData.getMaxBinaryLiteralLength());
-			data.baseDefine("Max character literal length", (long) metaData.getMaxCharLiteralLength());
-			data.baseDefine("Max column name length", (long) metaData.getMaxColumnNameLength());
-			data.baseDefine("Max columns in GROUP BY", (long) metaData.getMaxColumnsInGroupBy());
-			data.baseDefine("Max columns in index", (long) metaData.getMaxColumnsInIndex());
-			data.baseDefine("Max columns in ORDER BY", (long) metaData.getMaxColumnsInOrderBy());
-			data.baseDefine("Max columns in SELECT", (long) metaData.getMaxColumnsInSelect());
-			data.baseDefine("Max columns in table", (long) metaData.getMaxColumnsInTable());
-			data.baseDefine("Max concurrent connection", (long) metaData.getMaxConnections());
-			data.baseDefine("Max cursor name length", (long) metaData.getMaxCursorNameLength());
-			data.baseDefine("Max index length", (long) metaData.getMaxIndexLength());
-			data.baseDefine("Max schema name length", (long) metaData.getMaxSchemaNameLength());
-			data.baseDefine("Max procedure name length", (long) metaData.getMaxProcedureNameLength());
-			data.baseDefine("Max catalog name length", (long) metaData.getMaxCatalogNameLength());
-			data.baseDefine("Storage: max row size", Format.Compact.toBytes( metaData.getMaxRowSize() ));
+			data.baseDefine("Max binary literal length", metaData.getMaxBinaryLiteralLength());
+			data.baseDefine("Max character literal length", metaData.getMaxCharLiteralLength());
+			data.baseDefine("Max column name length", metaData.getMaxColumnNameLength());
+			data.baseDefine("Max columns in GROUP BY", metaData.getMaxColumnsInGroupBy());
+			data.baseDefine("Max columns in index", metaData.getMaxColumnsInIndex());
+			data.baseDefine("Max columns in ORDER BY", metaData.getMaxColumnsInOrderBy());
+			data.baseDefine("Max columns in SELECT", metaData.getMaxColumnsInSelect());
+			data.baseDefine("Max columns in table", metaData.getMaxColumnsInTable());
+			data.baseDefine("Max concurrent connection", metaData.getMaxConnections());
+			data.baseDefine("Max cursor name length", metaData.getMaxCursorNameLength());
+			data.baseDefine("Max index length", metaData.getMaxIndexLength());
+			data.baseDefine("Max schema name length", metaData.getMaxSchemaNameLength());
+			data.baseDefine("Max procedure name length", metaData.getMaxProcedureNameLength());
+			data.baseDefine("Max catalog name length", metaData.getMaxCatalogNameLength());
+			data.baseDefine("Storage: max row size", Format.Compact.toBytes(metaData.getMaxRowSize()));
 			data.baseDefine("Storage: does max row size include BLOBs", metaData.doesMaxRowSizeIncludeBlobs());
-			data.baseDefine("Max statement length", (long) metaData.getMaxStatementLength());
-			data.baseDefine("Max statements", (long) metaData.getMaxStatements());
-			data.baseDefine("Max table name length", (long) metaData.getMaxTableNameLength());
-			data.baseDefine("Max tables in SELECT", (long) metaData.getMaxTablesInSelect());
-			data.baseDefine("Max user name length", (long) metaData.getMaxUserNameLength());
-			data.baseDefine("Default transaction isolation", (long) metaData.getDefaultTransactionIsolation());
+			data.baseDefine("Max statement length", metaData.getMaxStatementLength());
+			data.baseDefine("Max statements", metaData.getMaxStatements());
+			data.baseDefine("Max table name length", metaData.getMaxTableNameLength());
+			data.baseDefine("Max tables in SELECT", metaData.getMaxTablesInSelect());
+			data.baseDefine("Max user name length", metaData.getMaxUserNameLength());
+			data.baseDefine("Default transaction isolation", metaData.getDefaultTransactionIsolation());
 			data.baseDefine("Supports transactions", metaData.supportsTransactions());
 			data.baseDefine("Supports data definition and data manipulation transaction", metaData.supportsDataDefinitionAndDataManipulationTransactions());
 			data.baseDefine("Supports data manipulation transactions only", metaData.supportsDataManipulationTransactionsOnly());
@@ -189,27 +183,27 @@ final class FormSqlInfo extends AbstractForm<FormSqlInfo> {
 				data.baseDefine("Supports get generated keys", "N/A, " + t.getClass().getName());
 			}
 			try {
-				data.baseDefine("Database major version", (long) metaData.getDatabaseMajorVersion());
+				data.baseDefine("Database major version", metaData.getDatabaseMajorVersion());
 			} catch (final Throwable t) {
 				data.baseDefine("Database major version", "N/A, " + t.getClass().getName());
 			}
 			try {
-				data.baseDefine("Database minor version", (long) metaData.getDatabaseMinorVersion());
+				data.baseDefine("Database minor version", metaData.getDatabaseMinorVersion());
 			} catch (final Throwable t) {
 				data.baseDefine("Database minor version", "N/A, " + t.getClass().getName());
 			}
 			try {
-				data.baseDefine("Driver JDBC major version", (long) metaData.getJDBCMajorVersion());
+				data.baseDefine("Driver JDBC major version", metaData.getJDBCMajorVersion());
 			} catch (final Throwable t) {
 				data.baseDefine("Driver JDBC major version", "N/A, " + t.getClass().getName());
 			}
 			try {
-				data.baseDefine("Driver JDBC minor version", (long) metaData.getJDBCMinorVersion());
+				data.baseDefine("Driver JDBC minor version", metaData.getJDBCMinorVersion());
 			} catch (final Throwable t) {
 				data.baseDefine("Driver JDBC minor version", "N/A, " + t.getClass().getName());
 			}
 			try {
-				data.baseDefine("Driver SQL state type", (long) metaData.getSQLStateType());
+				data.baseDefine("Driver SQL state type", metaData.getSQLStateType());
 			} catch (final Throwable t) {
 				data.baseDefine("Driver SQL state type", "N/A, " + t.getClass().getName());
 			}
@@ -224,13 +218,14 @@ final class FormSqlInfo extends AbstractForm<FormSqlInfo> {
 				data.baseDefine("Supports statement pooling", "N/A, " + t.getClass().getName());
 			}
 		} catch (final SQLException e) {
-			throw new RuntimeException( e );
+			throw new RuntimeException(e);
 		}
-		return new BaseNativeObject( "data", data );
+		return new BaseNativeObject("data", data);
 	}
-	
+
 	@Override
 	public ControlFieldset<?> getFieldset() {
+		
 		return FormSqlInfo.FIELDSET;
 	}
 }

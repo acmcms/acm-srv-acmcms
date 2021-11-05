@@ -27,7 +27,7 @@ final class CommandCreateFactory implements ObjectFactory<Object, ControlContain
 
 	private static final String UID_RS = "ACM_ROOT_COMMAND_RESTART_SERVER";
 
-	private static final ControlContainer<?> CONTAINER_GC = new AbstractContainer<AbstractContainer<?>>() {
+	private static final ControlContainer<?> CONTAINER_GC = new AbstractContainer<>() {
 
 		@Override
 		public Object getCommandResult(final ControlCommand<?> command, final BaseObject arguments) {
@@ -42,7 +42,7 @@ final class CommandCreateFactory implements ObjectFactory<Object, ControlContain
 		}
 	};
 
-	private static final ControlContainer<?> CONTAINER_RS = new AbstractContainer<AbstractContainer<?>>() {
+	private static final ControlContainer<?> CONTAINER_RS = new AbstractContainer<>() {
 
 		@Override
 		public Object getCommandResult(final ControlCommand<?> command, final BaseObject arguments) {

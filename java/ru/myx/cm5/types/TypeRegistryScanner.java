@@ -226,7 +226,7 @@ public class TypeRegistryScanner implements Runner, Runnable, TypeRegistry {
 					checkFiles.remove(name);
 					final Long date = this.allDates.get(name);
 					if (date == null || date.longValue() != modified) {
-						this.allDates.put(name, new Long(modified));
+						this.allDates.put(name, Long.valueOf(modified));
 						changed = true;
 					}
 					Thread.yield();

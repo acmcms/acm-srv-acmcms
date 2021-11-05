@@ -81,7 +81,7 @@ public class FormAccessPointSetup extends AbstractForm<FormAccessPointSetup> {
 														"ru",
 														"Начинающаяся в данном узле ветка дерева будет доступна по именам, указанным в этой форме. В качестве имен точек доступа используйте имена доменов.\r\nВНИМАНИЕ: чтобы указанные имена были доступны пользователям сайта они должны быть зарегистрированны на сервере DNS.")))
 								.setAttribute("content_fieldset", FormAccessPointSetup.FIELDSET_SHARE_LIST)
-								.setAttribute("content_handler", new BaseFunctionActAbstract<Void, ContainerSharing>(Void.class, ContainerSharing.class) {
+								.setAttribute("content_handler", new BaseFunctionActAbstract<>(Void.class, ContainerSharing.class) {
 									
 									@Override
 									public ContainerSharing apply(final Void argument) {

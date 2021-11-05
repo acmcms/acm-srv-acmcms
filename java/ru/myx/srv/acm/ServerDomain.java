@@ -164,7 +164,7 @@ public class ServerDomain extends AbstractZoneServer implements ServerRT3 {
 			"en"
 	};
 
-	private final Function<PluginInstance, Object> pluginRegistrar = new Function<PluginInstance, Object>() {
+	private final Function<PluginInstance, Object> pluginRegistrar = new Function<>() {
 
 		@Override
 		public Object apply(final PluginInstance plugin) {
@@ -330,7 +330,7 @@ public class ServerDomain extends AbstractZoneServer implements ServerRT3 {
 				Storage.mount(acm, "private", TreeLinkType.PUBLIC_TREE_REFERENCE, Storage.createRoot(new StorageImplFilesystem(Engine.PATH_PRIVATE, false)));
 				Storage.mount(acm, "shared", TreeLinkType.PUBLIC_TREE_REFERENCE, Storage.createRoot(new StorageImplFilesystem(Engine.PATH_SHARED, false)));
 				Storage.mount(acm, "cache", TreeLinkType.PUBLIC_TREE_REFERENCE, Storage.createRoot(new StorageImplFilesystem(Engine.PATH_CACHE, false)));
-				Storage.mount(acm, "logs", TreeLinkType.PUBLIC_TREE_REFERENCE, Storage.createRoot(new StorageImplFilesystem(Report.LOG_ROOT_FILE, false)));
+				Storage.mount(acm, "logs", TreeLinkType.PUBLIC_TREE_REFERENCE, Storage.createRoot(new StorageImplFilesystem(Engine.PATH_LOGS, false)));
 				Storage.mount(acm, "temp", TreeLinkType.PUBLIC_TREE_REFERENCE, Storage.createRoot(new StorageImplFilesystem(Engine.PATH_TEMP, false)));
 				Storage.mount(acm, "vfs", TreeLinkType.PUBLIC_TREE_REFERENCE, Storage.getRoot(Exec.getRootProcess()));
 			}
@@ -363,12 +363,12 @@ public class ServerDomain extends AbstractZoneServer implements ServerRT3 {
 						logs,
 						id + "-audit",
 						TreeLinkType.PUBLIC_TREE_REFERENCE,
-						Storage.createRoot(new StorageImplFilesystem(new File(Report.LOG_ROOT_FILE, id + "-audit"), false)));
+						Storage.createRoot(new StorageImplFilesystem(new File(Engine.PATH_LOGS, id + "-audit"), false)));
 				Storage.mount(
 						logs,
 						id + "-log",
 						TreeLinkType.PUBLIC_TREE_REFERENCE,
-						Storage.createRoot(new StorageImplFilesystem(new File(Report.LOG_ROOT_FILE, id + "-log"), false)));
+						Storage.createRoot(new StorageImplFilesystem(new File(Engine.PATH_LOGS, id + "-log"), false)));
 			}
 		}
 
