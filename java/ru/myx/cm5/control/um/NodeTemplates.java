@@ -3,6 +3,7 @@ package ru.myx.cm5.control.um;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,7 +13,6 @@ import ru.myx.ae1.access.Access;
 import ru.myx.ae1.control.AbstractNode;
 import ru.myx.ae1.control.Control;
 import ru.myx.ae1.control.MultivariantString;
-import ru.myx.ae3.Engine;
 import ru.myx.ae3.access.AccessPermissions;
 import ru.myx.ae3.act.Context;
 import ru.myx.ae3.base.Base;
@@ -83,7 +83,7 @@ final class NodeTemplates extends AbstractNode {
 			throw new IllegalArgumentException("Unknown template name: " + name);
 		}
 		try {
-			return Transfer.createBuffer(stream).toString(Engine.CHARSET_UTF8);
+			return Transfer.createBuffer(stream).toString(StandardCharsets.UTF_8);
 		} catch (final Throwable e) {
 			return "<%RETURN: { title:'Unknown form', body:'error retrieving template: " + Format.Ecma.string(e.getMessage() + "!") + "'}%>";
 		}

@@ -3,11 +3,11 @@
  */
 package ru.myx.cm5.control.lfs;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import ru.myx.ae1.control.Control;
 import ru.myx.ae1.control.MultivariantString;
-import ru.myx.ae3.Engine;
 import ru.myx.ae3.base.Base;
 import ru.myx.ae3.base.BaseObject;
 import ru.myx.ae3.binary.Transfer;
@@ -55,7 +55,7 @@ final class FormCreate extends AbstractForm<FormCreate> {
 				throw new IllegalArgumentException("Already exists (" + name + ")!");
 			}
 			final String text = Base.getString(arguments, "text", "").trim();
-			file.doSetBinary(Transfer.wrapCopier(text.getBytes(Engine.CHARSET_UTF8)));
+			file.doSetBinary(Transfer.wrapCopier(text.getBytes(StandardCharsets.UTF_8)));
 			return null;
 		}
 		return super.getCommandResult(command, arguments);

@@ -7,6 +7,7 @@
 package ru.myx.srv.acm;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -650,7 +651,7 @@ public class ServerDomain extends AbstractZoneServer implements ServerRT3 {
 			final String url = server//
 					.fixUrl(
 							query.getUrlBase() + "/login.user?tp=rt3&back="
-									+ Text.encodeUriComponent(back.substring(query.getProtocolName().length() + 3 + query.getTargetExact().length()), Engine.CHARSET_UTF8));
+									+ Text.encodeUriComponent(back.substring(query.getProtocolName().length() + 3 + query.getTargetExact().length()), StandardCharsets.UTF_8));
 			/** Redirecting to login page */
 			throw Reply.exception(
 					Reply.redirect(
