@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.Function;
 
 import ru.myx.ae1.BaseRT3;
 import ru.myx.ae1.access.Access;
@@ -19,7 +20,6 @@ import ru.myx.ae1.control.MultivariantString;
 import ru.myx.ae1.know.Server;
 import ru.myx.ae3.Engine;
 import ru.myx.ae3.access.AccessPermissions;
-import java.util.function.Function;
 import ru.myx.ae3.act.Context;
 import ru.myx.ae3.answer.AbstractReplyException;
 import ru.myx.ae3.answer.ReplyAnswer;
@@ -296,7 +296,7 @@ public class NodeUM extends AbstractNode {
 		final String currentUserId = defaultId;
 		final String targetUserId;
 		final AccessUser<?> uo;
-		if (currentUserId == null || currentUserId.trim().length() == 0) {
+		if (currentUserId == null || currentUserId.isBlank()) {
 			targetUserId = Engine.createGuid();
 			uo = accessManager.getUser(targetUserId, true);
 		} else {
@@ -325,7 +325,7 @@ public class NodeUM extends AbstractNode {
 		String emailSubject;
 		String emailBody;
 		final String emails = NodeUM.getRegistrationNotificationEmailList();
-		if (emails != null && emails.trim().length() > 0) {
+		if (emails != null && !emails.isBlank()) {
 			try {
 				Context.getFlags(process).baseDefine("userid", targetUserId);
 				Context.getFlags(process).baseDefine("email", email);
@@ -422,9 +422,7 @@ public class NodeUM extends AbstractNode {
 				.addPermission("view", MultivariantString.getString("View group or user data", Collections.singletonMap("ru", "Просматривать свойства пользователя или группы")))
 				.addPermission("create", MultivariantString.getString("Create groups and users", Collections.singletonMap("ru", "Создавать пользователей и группы")))
 				.addPermission("modify", MultivariantString.getString("Edit groups and users", Collections.singletonMap("ru", "Редактировать пользователей и группы")))
-				.addPermission("delete", MultivariantString.getString("Delete groups and users", Collections.singletonMap(
-						"ru",
-						"Удалять пользователей и группы")));
+				.addPermission("delete", MultivariantString.getString("Delete groups and users", Collections.singletonMap("ru", "Удалять пользователей и группы")));
 	}
 
 	@Override
