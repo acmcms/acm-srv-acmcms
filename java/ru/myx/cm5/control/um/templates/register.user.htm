@@ -19,7 +19,7 @@
 <%/IF%>
 
 <%OUTPUT: body %>
-	<FORM action="<%= Request.URL() %>" METHOD=POST>
+	<FORM action="<%= Request.getUrl() %>" METHOD=POST>
 		<table border='0' width='0%'>
 			<%IF: Flags.Error %>
 				<tr>
