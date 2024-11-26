@@ -33,23 +33,17 @@ import ru.myx.cm5.control.um.NodeUM;
 import ru.myx.sapi.RuntimeEnvironment;
 import ru.myx.sapi.UserManagerSAPI;
 
-/**
- *
- * @author myx
- *
- */
+/** @author myx */
 final class CommandUser {
 	
-	
 	private static final String OWNER = "ACM/USER";
-
+	
 	private static final Object EMAIL_VALIDATION_STR = MultivariantString
 			.getString("e-mail address validation", Collections.singletonMap("ru", "подтверждение адреса электронной почты"));
-
+	
 	private static final Handler defaultUserActionRunner = new RuntimeDefaultUserActionRunner();
-
+	
 	private static ReplyAnswer doChangeEmail(final Server server, final EmailSender mta, final ServeRequest query, final BaseObject flags) {
-		
 		
 		server.ensureAuthorization(AuthLevels.AL_AUTHORIZED_NORMAL);
 		final AccessUser<?> user = Context.getUser(Exec.currentProcess());
@@ -90,7 +84,7 @@ final class CommandUser {
 						.putAppend("userid", user.getKey()) //
 						.putAppend("email", newEmail) //
 				;
-				final long expiration = Engine.fastTime() + 1000L * 60L * 60L * 24L * 7L;
+				final long expiration = Engine.fastTime() + 60_000L * 60L * 24L * 7L;
 				server.getStorage().saveTemporary(actionID, action, expiration);
 				flags.baseDefine("Scheduled", BaseObject.TRUE);
 				flags.baseDefine("ValidTill", Base.forDateMillis(expiration));
@@ -116,9 +110,8 @@ final class CommandUser {
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 	private static ReplyAnswer doChangePassword(final Server server, final ServeRequest query, final BaseObject flags) {
-		
 		
 		server.ensureAuthorization(AuthLevels.AL_AUTHORIZED_NORMAL);
 		final ExecProcess process = Exec.currentProcess();
@@ -156,11 +149,10 @@ final class CommandUser {
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
-		return Reply
-				.object(
-						CommandUser.OWNER, //
-						query,
-						result) //
+		return Reply.object(
+				CommandUser.OWNER, //
+				query,
+				result) //
 				.setTitle("User settings") //
 				.setTimeToLiveHours(1) //
 				.setFlags(flags) //
@@ -168,9 +160,8 @@ final class CommandUser {
 		// .setContentIdentity( "mwmUserSettings" )
 		;
 	}
-
+	
 	private static ReplyAnswer doForgetPassword(final Server server, final EmailSender mta, final ServeRequest query, final BaseObject flags) {
-		
 		
 		final String email = Base.getString(query.getParameters(), "email", "").toLowerCase();
 		flags.baseDefine("Form", "email");
@@ -218,7 +209,7 @@ final class CommandUser {
 								.putAppend("action", "forgotPassword")//
 								.putAppend("userid", user.getKey())//
 						;
-						final long expiration = Engine.fastTime() + 1000L * 60L * 60L * 24L * 7L;
+						final long expiration = Engine.fastTime() + 60_000L * 60L * 24L * 7L;
 						server.getStorage().saveTemporary(actionID, action, expiration);
 						flags.baseDefine("Scheduled", BaseObject.TRUE);
 						flags.baseDefine("ValidTill", Base.forDateMillis(expiration));
@@ -244,9 +235,8 @@ final class CommandUser {
 			throw new RuntimeException(e);
 		}
 	}
-
+	
 	private static final ReplyAnswer doLogin(final Server server, final boolean useSystemAuth, final ServeRequest query, final ExecProcess process, final BaseObject flags) {
-		
 		
 		final Context context = Context.getContext(process);
 		final BaseObject session = context.getSessionData();
@@ -261,27 +251,22 @@ final class CommandUser {
 		final boolean attempt = Base.getString(request, "login", "").length() > 0 || Base.getString(request, "__auth_type", "").length() > 0;
 		if (attempt) {
 			try {
-				/**
-				 * there was invalidateAuth() but we'd like to keep the userId
+				/** there was invalidateAuth() but we'd like to keep the userId
 				 *
-				 * TODO make context.prepareAuth something
-				 */
+				 * TODO make context.prepareAuth something */
 				context.setSessionState(AuthLevels.AL_UNAUTHORIZED);
 				// context.invalidateAuth();
 				server.ensureAuthorization(AuthLevels.AL_AUTHORIZED_NORMAL);
-				return Reply
-						.redirect(
-								CommandUser.OWNER, //
-								query,
-								false,
-								server.fixUrl(back))//
+				return Reply.redirect(
+						CommandUser.OWNER, //
+						query,
+						false,
+						server.fixUrl(back))//
 						.setPrivate()//
 						.setNoCaching();
 			} catch (final AbstractReplyException f) {
-				/**
-				 * Any non login related response must be forwarded (and likely
-				 * to be an error by the way)
-				 */
+				/** Any non login related response must be forwarded (and likely to be an error by
+				 * the way) */
 				if (f.getCode() != Reply.CD_DENIED && f.getCode() != Reply.CD_UNAUTHORIZED) {
 					return f.getReply().setPrivate();
 				}
@@ -295,26 +280,24 @@ final class CommandUser {
 						.putAppend("back", back)//
 						.putAppend(
 								"error", //
-								/**
-								 * no need to check state
-								 */
+								/** no need to check state */
 								attempt
 									? session.baseGet("loginError", BaseObject.UNDEFINED)
 									: BaseObject.UNDEFINED //
-				)//
+						)//
 		)//
-				.setCode(useSystemAuth
-					? Reply.CD_UNAUTHORIZED
-					: Reply.CD_OK)//
+				.setCode(
+						useSystemAuth
+							? Reply.CD_UNAUTHORIZED
+							: Reply.CD_OK)//
 				.setTitle("Authentication")//
 				.setContentID("ru.myx.srv.acm.CommandUser")//
 				.setNoCaching()//
 				.setFlags(flags)//
 				.setPrivate();
 	}
-
+	
 	private static final ReplyAnswer doRegister(final Server server, final ServeRequest query, final ExecProcess process, final BaseObject flags) {
-		
 		
 		final BaseObject rd = query.getParameters();
 		final String login = Base.getString(rd, "login", "").trim().toLowerCase();
@@ -347,11 +330,10 @@ final class CommandUser {
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
-		return Reply
-				.object(
-						CommandUser.OWNER, //
-						query,
-						result)//
+		return Reply.object(
+				CommandUser.OWNER, //
+				query,
+				result)//
 				.setTitle("Registration")//
 				.setContentID("mwmRegistration")//
 				.setTimeToLiveHours(1)//
@@ -359,9 +341,8 @@ final class CommandUser {
 				.setFlags(flags)//
 				.setPrivate();
 	}
-
+	
 	private static final ReplyAnswer doSettings(final Server server, final ServeRequest query, final BaseObject flags) {
-		
 		
 		server.ensureAuthorization(AuthLevels.AL_AUTHORIZED_NORMAL);
 		final ExecProcess process = Exec.currentProcess();
@@ -402,20 +383,18 @@ final class CommandUser {
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
-		return Reply
-				.object(
-						CommandUser.OWNER, //
-						query,
-						result)//
+		return Reply.object(
+				CommandUser.OWNER, //
+				query,
+				result)//
 				.setTitle("Settings")//
 				.setContentID("mwmUserSettings")//
 				.setNoCaching()//
 				.setFlags(flags)//
 				.setPrivate();
 	}
-
+	
 	private static final ReplyAnswer doUserAction(final Server server, final ServeRequest query) {
-		
 		
 		final BaseObject queryParameters = query.getParameters();
 		final String actionID = Base.getString(queryParameters, "action", "").trim();
@@ -446,16 +425,40 @@ final class CommandUser {
 		}
 		for (final Iterator<String> iterator = Base.keys(action); iterator.hasNext();) {
 			final String key = iterator.next();
-			/**
-			 * setParameter exactly, don't want to have random arrays
-			 */
+			/** setParameter exactly, don't want to have random arrays */
 			query.setParameter(key, action.baseGet(key, BaseObject.UNDEFINED));
 		}
 		return runner.onQuery(query);
 	}
-
-	public static final ReplyAnswer handleRequest(final Server server, final RuntimeEnvironment rt, final boolean useSystemAuth, final ServeRequest query) {
+	
+	private static final void updateUser(final AccessUser<?> user, final BaseObject data) throws Exception {
 		
+		final BaseObject sourceData = new BaseNativeObject();
+		final String language;
+		if (data != null) {
+			language = Base.getString(data, "language", Context.getLanguage(Exec.currentProcess()).getName());
+			for (final Iterator<String> iterator = Base.keys(data); iterator.hasNext();) {
+				final String key = iterator.next();
+				if (key.startsWith("reg")) {
+					sourceData.baseDefine(key.substring(3), data.baseGet(key, BaseObject.UNDEFINED));
+				}
+			}
+		} else {
+			language = Context.getLanguage(Exec.currentProcess()).getName();
+		}
+		final BaseObject registrationData = new BaseNativeObject();
+		final ControlFieldset<?> cfd = NodeUM.getCommonFieldsDefinition();
+		final Map<String, String> validation = cfd.dataValidate(sourceData);
+		if (validation != null && validation.size() > 0) {
+			throw new IllegalArgumentException("+" + Text.join(validation.keySet(), ","));
+		}
+		cfd.dataStore(sourceData, registrationData);
+		user.setLanguage(language);
+		user.setProfile(registrationData);
+		user.commit();
+	}
+	
+	public static final ReplyAnswer handleRequest(final Server server, final RuntimeEnvironment rt, final boolean useSystemAuth, final ServeRequest query) {
 		
 		final String path = query.getResourceIdentifier();
 		if (path.endsWith(".user")) {
@@ -494,33 +497,5 @@ final class CommandUser {
 			}
 		}
 		return null;
-	}
-
-	private static final void updateUser(final AccessUser<?> user, final BaseObject data) throws Exception {
-		
-		
-		final BaseObject sourceData = new BaseNativeObject();
-		final String language;
-		if (data != null) {
-			language = Base.getString(data, "language", Context.getLanguage(Exec.currentProcess()).getName());
-			for (final Iterator<String> iterator = Base.keys(data); iterator.hasNext();) {
-				final String key = iterator.next();
-				if (key.startsWith("reg")) {
-					sourceData.baseDefine(key.substring(3), data.baseGet(key, BaseObject.UNDEFINED));
-				}
-			}
-		} else {
-			language = Context.getLanguage(Exec.currentProcess()).getName();
-		}
-		final BaseObject registrationData = new BaseNativeObject();
-		final ControlFieldset<?> cfd = NodeUM.getCommonFieldsDefinition();
-		final Map<String, String> validation = cfd.dataValidate(sourceData);
-		if (validation != null && validation.size() > 0) {
-			throw new IllegalArgumentException("+" + Text.join(validation.keySet(), ","));
-		}
-		cfd.dataStore(sourceData, registrationData);
-		user.setLanguage(language);
-		user.setProfile(registrationData);
-		user.commit();
 	}
 }
