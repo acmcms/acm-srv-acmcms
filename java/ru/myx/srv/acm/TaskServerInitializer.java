@@ -4,9 +4,9 @@
 package ru.myx.srv.acm;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 import ru.myx.ae1.know.AbstractZoneServer;
-import java.util.function.Function;
 import ru.myx.ae3.binary.Transfer;
 import ru.myx.ae3.binary.TransferCopier;
 import ru.myx.ae3.report.Report;
@@ -14,25 +14,22 @@ import ru.myx.ae3.vfs.Entry;
 import ru.myx.ae3.xml.Xml;
 
 final class TaskServerInitializer implements Function<ServerDomain, Object> {
-
+	
 	static final TaskServerInitializer INSTANCE = new TaskServerInitializer();
-
+	
 	private TaskServerInitializer() {
+		
 		//
 	}
-
+	
 	@Override
 	public final Object apply(final ServerDomain server) {
-
-		/**
-		 * Execute domain-global.js
-		 */
+		
+		/** Execute domain-global.js */
 		{
 			AbstractZoneServer.acmJailInitializeRootContext(server, server.getRootContext());
 		}
-		/**
-		 * check / create config.xml
-		 */
+		/** check / create config.xml */
 		{
 			TransferCopier bytes;
 			try {
@@ -42,13 +39,9 @@ final class TaskServerInitializer implements Function<ServerDomain, Object> {
 				Report.exception("RT3/HOST", "FATAL CANNOT ACCESS OWN RESOURCES!", e1);
 				throw new RuntimeException(e1);
 			}
-			/**
-			 * site root on VFS
-			 */
+			/** site root on VFS */
 			final Entry folderVfs = server.getVfsZoneEntry();
-			/**
-			 * Check/create config.xml.sample example file
-			 */
+			/** Check/create config.xml.sample example file */
 			{
 				final Entry configSampleFile = folderVfs.relativeFile("config.xml.sample");
 				if (!configSampleFile.isExist() || configSampleFile.toBinary().getBinaryContentLength() != bytes.length()) {
@@ -60,9 +53,7 @@ final class TaskServerInitializer implements Function<ServerDomain, Object> {
 					}
 				}
 			}
-			/**
-			 * Read and parse config.xml
-			 */
+			/** Read and parse config.xml */
 			{
 				final Entry configFile = folderVfs.relativeFile("config.xml");
 				if (!configFile.isExist()) {
@@ -77,7 +68,7 @@ final class TaskServerInitializer implements Function<ServerDomain, Object> {
 					Xml.toMap(
 							"serverConfig(" + server.getDomainId() + ")", //
 							configFile.toBinary().getBinaryContent().baseValue(),
-							null /* Engine.CHARSET_DEFAULT */,
+							null /* Charset.defaultCharset() */,
 							null,
 							server.config,
 							null,
@@ -87,10 +78,10 @@ final class TaskServerInitializer implements Function<ServerDomain, Object> {
 		}
 		return null;
 	}
-
+	
 	@Override
 	public final String toString() {
-
+		
 		return "Server Starter Task";
 	}
 }

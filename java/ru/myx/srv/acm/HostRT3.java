@@ -8,6 +8,7 @@ package ru.myx.srv.acm;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -21,7 +22,6 @@ import java.util.List;
 import java.util.Properties;
 
 import ru.myx.ae1.PluginInstance;
-import ru.myx.ae3.Engine;
 import ru.myx.ae3.base.Base;
 import ru.myx.ae3.base.BaseArray;
 import ru.myx.ae3.base.BaseNativeObject;
@@ -35,9 +35,104 @@ import ru.myx.ae3.report.Report;
  *         To change the template for this generated type comment go to Window>Preferences>Java>Code
  *         Generation>Code and Comments */
 public class HostRT3 {
+
+	private static void tryConnection(final ServerDomain server, final BaseObject object) {
+
+		final Properties info = new Properties();
+		info.setProperty("useUnicode", "true");
+		info.setProperty("characterEncoding", StandardCharsets.UTF_8.name());
+		for (final Iterator<String> iterator = Base.keys(object); iterator.hasNext();) {
+			String key = iterator.next();
+			if (key.equalsIgnoreCase("dbuser")) {
+				key = "user";
+			}
+			if (key.equalsIgnoreCase("dbpassword")) {
+				key = "password";
+			}
+			info.setProperty(key, Convert.MapEntry.toString(object, key, ""));
+		}
+		final String alias = Convert.MapEntry.toString(info, "id", "").trim();
+		final String url = Convert.MapEntry.toString(info, "url", "").trim();
+		if (alias.length() == 0) {
+			throw new IllegalArgumentException("'id' attribute is required!");
+		}
+		if (url.length() == 0) {
+			throw new IllegalArgumentException("'url' attribute is required!");
+		}
+		try {
+			server.connections.registerConnection(alias, url, info);
+		} catch (final SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	private static void tryLanguage(final Collection<String> languages, final BaseObject object) {
+
+		assert object != null : "NULL java value";
+		final String id = Base.getString(object, "id", "").trim();
+		if (id.length() > 0) {
+			languages.add(id);
+		}
+	}
+	
+	private static void tryPlugin(final ServerDomain server, final BaseObject object) {
+
+		assert object != null : "NULL java value";
+		final String pluginClass = Base.getString(object, "class", "").trim();
+		if (pluginClass.length() > 0) {
+			final BaseNativeObject info = new BaseNativeObject();
+			for (final Iterator<String> iterator = Base.keys(object); iterator.hasNext();) {
+				final String key = iterator.next();
+				if (key.length() > 0 && !"class".equals(key)) {
+					final String value = Base.getString(object, key, "");
+					final String realValue = value.startsWith("RootFolder/")
+						? new File(server.getSystemRoot(), value.substring(11)).getAbsolutePath()
+						: value;
+					info.putAppend(key, realValue);
+				}
+			}
+			PluginInstance plugin = Produce.object(PluginInstance.class, pluginClass, info, null);
+			if (plugin == null) {
+				try {
+					final Class<?> cls = Class.forName(pluginClass);
+					final Object o = cls.getConstructor().newInstance();
+					if (!(o instanceof PluginInstance)) {
+						System.out.println("Not a plugin: " + pluginClass);
+					}
+					plugin = (PluginInstance) o;
+				} catch (final InvocationTargetException e) {
+					System.out.println("InvocationTargetException: " + pluginClass);
+					return;
+				} catch (final NoSuchMethodException e) {
+					System.out.println("NoSuchMethodException: " + pluginClass);
+					return;
+				} catch (final InstantiationException e) {
+					System.out.println("InstantiationException: " + pluginClass);
+					return;
+				} catch (final IllegalAccessException e) {
+					System.out.println("IllegalAccessException: " + pluginClass);
+					return;
+				} catch (final ClassNotFoundException e) {
+					System.out.println("CLASS NOT FOUND: " + pluginClass);
+					return;
+				}
+			}
+			server.addPlugin(plugin, info);
+		}
+	}
+	
+	private static void tryProperty(final ServerDomain server, final BaseObject object) {
+
+		assert object != null : "NULL java object";
+		final String name = Base.getString(object, "name", "").trim();
+		if (name.length() > 0) {
+			final String value = Base.getString(object, "value", "");
+			server.getProperties().setProperty(name, value);
+		}
+	}
 	
 	static final void stdinit(final ServerDomain server, final BaseObject attributes, final BaseObject config) {
-		
+
 		server.getProperties().setProperty("DomainID", server.getDomainId());
 		{
 			final BaseObject object = config.baseGet("application.variable", BaseObject.UNDEFINED);
@@ -143,101 +238,6 @@ public class HostRT3 {
 			} catch (final SQLException e) {
 				throw new RuntimeException("Fatal error while checking default connection!", e);
 			}
-		}
-	}
-
-	private static void tryConnection(final ServerDomain server, final BaseObject object) {
-		
-		final Properties info = new Properties();
-		info.setProperty("useUnicode", "true");
-		info.setProperty("characterEncoding", Engine.ENCODING_UTF8);
-		for (final Iterator<String> iterator = Base.keys(object); iterator.hasNext();) {
-			String key = iterator.next();
-			if (key.equalsIgnoreCase("dbuser")) {
-				key = "user";
-			}
-			if (key.equalsIgnoreCase("dbpassword")) {
-				key = "password";
-			}
-			info.setProperty(key, Convert.MapEntry.toString(object, key, ""));
-		}
-		final String alias = Convert.MapEntry.toString(info, "id", "").trim();
-		final String url = Convert.MapEntry.toString(info, "url", "").trim();
-		if (alias.length() == 0) {
-			throw new IllegalArgumentException("'id' attribute is required!");
-		}
-		if (url.length() == 0) {
-			throw new IllegalArgumentException("'url' attribute is required!");
-		}
-		try {
-			server.connections.registerConnection(alias, url, info);
-		} catch (final SQLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private static void tryLanguage(final Collection<String> languages, final BaseObject object) {
-		
-		assert object != null : "NULL java value";
-		final String id = Base.getString(object, "id", "").trim();
-		if (id.length() > 0) {
-			languages.add(id);
-		}
-	}
-
-	private static void tryPlugin(final ServerDomain server, final BaseObject object) {
-		
-		assert object != null : "NULL java value";
-		final String pluginClass = Base.getString(object, "class", "").trim();
-		if (pluginClass.length() > 0) {
-			final BaseNativeObject info = new BaseNativeObject();
-			for (final Iterator<String> iterator = Base.keys(object); iterator.hasNext();) {
-				final String key = iterator.next();
-				if (key.length() > 0 && !"class".equals(key)) {
-					final String value = Base.getString(object, key, "");
-					final String realValue = value.startsWith("RootFolder/")
-						? new File(server.getSystemRoot(), value.substring(11)).getAbsolutePath()
-						: value;
-					info.putAppend(key, realValue);
-				}
-			}
-			PluginInstance plugin = Produce.object(PluginInstance.class, pluginClass, info, null);
-			if (plugin == null) {
-				try {
-					final Class<?> cls = Class.forName(pluginClass);
-					final Object o = cls.getConstructor().newInstance();
-					if (!(o instanceof PluginInstance)) {
-						System.out.println("Not a plugin: " + pluginClass);
-					}
-					plugin = (PluginInstance) o;
-				} catch (final InvocationTargetException e) {
-					System.out.println("InvocationTargetException: " + pluginClass);
-					return;
-				} catch (final NoSuchMethodException e) {
-					System.out.println("NoSuchMethodException: " + pluginClass);
-					return;
-				} catch (final InstantiationException e) {
-					System.out.println("InstantiationException: " + pluginClass);
-					return;
-				} catch (final IllegalAccessException e) {
-					System.out.println("IllegalAccessException: " + pluginClass);
-					return;
-				} catch (final ClassNotFoundException e) {
-					System.out.println("CLASS NOT FOUND: " + pluginClass);
-					return;
-				}
-			}
-			server.addPlugin(plugin, info);
-		}
-	}
-
-	private static void tryProperty(final ServerDomain server, final BaseObject object) {
-		
-		assert object != null : "NULL java object";
-		final String name = Base.getString(object, "name", "").trim();
-		if (name.length() > 0) {
-			final String value = Base.getString(object, "value", "");
-			server.getProperties().setProperty(name, value);
 		}
 	}
 }
