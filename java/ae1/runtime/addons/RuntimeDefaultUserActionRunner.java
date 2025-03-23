@@ -13,18 +13,13 @@ import ru.myx.ae3.exec.ExecProcess;
 import ru.myx.ae3.i3.Handler;
 import ru.myx.ae3.serve.ServeRequest;
 
-/**
- * @author myx
- *
- */
+/** @author myx */
 public class RuntimeDefaultUserActionRunner implements Handler {
 	
-	
 	private static final String OWNER = "RT3/DUAR";
-
+	
 	@Override
 	public ReplyAnswer onQuery(final ServeRequest query) {
-		
 		
 		final BaseObject data = query.getParameters();
 		final String action = Base.getString(data, "action", "");
@@ -82,9 +77,7 @@ public class RuntimeDefaultUserActionRunner implements Handler {
 				)//
 						.setTitle("Forgot password")//
 						.setTimeToLiveHours(1);
-			} catch (final Error t) {
-				throw t;
-			} catch (final RuntimeException e) {
+			} catch (final Error | RuntimeException e) {
 				throw e;
 			} catch (final Throwable e) {
 				throw new RuntimeException(e);
