@@ -27,7 +27,7 @@ import ru.myx.ae3.exec.Exec;
 import ru.myx.ae3.exec.ExecProcess;
 import ru.myx.ae3.help.Convert;
 import ru.myx.ae3.help.Text;
-import ru.myx.ae3.i3.Handler;
+import ru.myx.ae3.i3.RequestHandler;
 import ru.myx.ae3.serve.ServeRequest;
 import ru.myx.cm5.control.um.NodeUM;
 import ru.myx.sapi.RuntimeEnvironment;
@@ -41,7 +41,7 @@ final class CommandUser {
 	private static final Object EMAIL_VALIDATION_STR = MultivariantString
 			.getString("e-mail address validation", Collections.singletonMap("ru", "подтверждение адреса электронной почты"));
 	
-	private static final Handler defaultUserActionRunner = new RuntimeDefaultUserActionRunner();
+	private static final RequestHandler defaultUserActionRunner = new RuntimeDefaultUserActionRunner();
 	
 	private static ReplyAnswer doChangeEmail(final Server server, final EmailSender mta, final ServeRequest query, final BaseObject flags) {
 		
@@ -416,7 +416,7 @@ final class CommandUser {
 					query,
 					"ActionType (" + typeName + ") is unknown!").setCode(Reply.CD_UNKNOWN);
 		}
-		final Handler runner = CommandUser.defaultUserActionRunner;
+		final RequestHandler runner = CommandUser.defaultUserActionRunner;
 		if (runner == null) {
 			return Reply.string(
 					CommandUser.OWNER, //

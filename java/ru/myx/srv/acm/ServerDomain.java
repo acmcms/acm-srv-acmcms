@@ -60,7 +60,7 @@ import ru.myx.ae3.exec.ExecProcess;
 import ru.myx.ae3.flow.ObjectTarget;
 import ru.myx.ae3.help.Format;
 import ru.myx.ae3.help.Text;
-import ru.myx.ae3.i3.Handler;
+import ru.myx.ae3.i3.RequestHandler;
 import ru.myx.ae3.produce.Produce;
 import ru.myx.ae3.report.Report;
 import ru.myx.ae3.serve.ServeRequest;
@@ -87,7 +87,7 @@ public class ServerDomain extends AbstractZoneServer implements ServerRT3 {
 
 	private static final Share<?>[] EMPTY_SHARE_ARRAY = new Share[0];
 
-	private static final Handler HANDLER_SHARE_DEAD = new HandlerShareReload();
+	private static final RequestHandler HANDLER_SHARE_DEAD = new HandlerShareReload();
 
 	private static final Map<String, PluginInstance> PUBLIC_PLUGIN_EXPORT = new ConcurrentHashMap<>();
 
@@ -496,12 +496,12 @@ public class ServerDomain extends AbstractZoneServer implements ServerRT3 {
 				assert controlRoot != null : "ControlRoot is NULL, domain=" + this + ", class=" + this.getClass().getName();
 				final ControlNode<?> handlerProvider = Control.relativeNode(controlRoot, path);
 				if (handlerProvider == null) {
-					assert false : "Handler provider is NULL, domain=" + this + ", path=" + path + ", share=" + share;
+					assert false : "RequestHandler provider is NULL, domain=" + this + ", path=" + path + ", share=" + share;
 					server = new ServerUnknown(this, this.entrance, target, nearest);
 				} else {
 					final Skinner skinner = this.getSkinner(share.getSkinner());
-					final Handler handlerSubstitute = handlerProvider.substituteHandler();
-					final Handler handlerToUse = handlerSubstitute == null
+					final RequestHandler handlerSubstitute = handlerProvider.substituteHandler();
+					final RequestHandler handlerToUse = handlerSubstitute == null
 						? ServerDomain.HANDLER_SHARE_DEAD
 						: handlerSubstitute;
 					server = new ServerShare(

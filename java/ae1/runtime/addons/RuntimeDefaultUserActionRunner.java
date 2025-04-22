@@ -10,11 +10,11 @@ import ru.myx.ae3.base.Base;
 import ru.myx.ae3.base.BaseObject;
 import ru.myx.ae3.exec.Exec;
 import ru.myx.ae3.exec.ExecProcess;
-import ru.myx.ae3.i3.Handler;
+import ru.myx.ae3.i3.RequestHandler;
 import ru.myx.ae3.serve.ServeRequest;
 
 /** @author myx */
-public class RuntimeDefaultUserActionRunner implements Handler {
+public class RuntimeDefaultUserActionRunner implements RequestHandler {
 	
 	private static final String OWNER = "RT3/DUAR";
 	

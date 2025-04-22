@@ -11,7 +11,7 @@ import ru.myx.ae3.base.BaseNativeObject;
 import ru.myx.ae3.base.BaseObject;
 import ru.myx.ae3.exec.Exec;
 import ru.myx.ae3.exec.ExecProcess;
-import ru.myx.ae3.i3.Handler;
+import ru.myx.ae3.i3.RequestHandler;
 import ru.myx.ae3.i3.TargetInterface;
 import ru.myx.ae3.l2.http.HttpTargetInterface;
 import ru.myx.ae3.report.Report;
@@ -19,10 +19,10 @@ import ru.myx.ae3.serve.ServeRequest;
 import ru.myx.sapi.ApplicationSAPI;
 import ae1.runtime.addons.RuntimeDefaultActionRunner;
 
-final class CommandSystem implements Handler {
+final class CommandSystem implements RequestHandler {
 	private static final String		OWNER				= "ACM/SYSTEM";
 	
-	private static final Handler	defaultActionRunner	= new RuntimeDefaultActionRunner();
+	private static final RequestHandler	defaultActionRunner	= new RuntimeDefaultActionRunner();
 	
 	private static final ReplyAnswer doSystem(
 			final ExecProcess process,
@@ -79,7 +79,7 @@ final class CommandSystem implements Handler {
 					"ActionType is unknown!" )//
 					.setCode( Reply.CD_UNKNOWN );
 		}
-		final Handler runner = CommandSystem.defaultActionRunner;
+		final RequestHandler runner = CommandSystem.defaultActionRunner;
 		if (runner == null) {
 			return Reply.string( CommandSystem.OWNER, //
 					query,

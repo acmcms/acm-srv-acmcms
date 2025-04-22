@@ -8,7 +8,7 @@ import ru.myx.ae3.base.BaseObject;
 import ru.myx.ae3.exec.Exec;
 import ru.myx.ae3.exec.ExecProcess;
 import ru.myx.ae3.help.Convert;
-import ru.myx.ae3.i3.Handler;
+import ru.myx.ae3.i3.RequestHandler;
 import ru.myx.ae3.report.Report;
 import ru.myx.ae3.serve.ServeRequest;
 
@@ -16,7 +16,7 @@ import ru.myx.ae3.serve.ServeRequest;
  * @author myx
  * 
  */
-public class RuntimeDefaultActionRunner implements Handler {
+public class RuntimeDefaultActionRunner implements RequestHandler {
 	@Override
 	public ReplyAnswer onQuery(final ServeRequest query) {
 		final BaseObject data = query.getParameters();

@@ -19,7 +19,7 @@ import ru.myx.ae3.binary.TransferDescription;
 import ru.myx.ae3.exec.Exec;
 import ru.myx.ae3.exec.ExecProcess;
 import ru.myx.ae3.help.Format;
-import ru.myx.ae3.i3.Handler;
+import ru.myx.ae3.i3.RequestHandler;
 import ru.myx.ae3.i3.web.WebInterface;
 import ru.myx.ae3.i3.web.WebTarget;
 import ru.myx.ae3.report.Report;
@@ -50,7 +50,7 @@ final class ServerUnknown extends FilterZoneServer implements ServerRT3 {
 
 	private final String alias;
 
-	private final Handler cmdSystem;
+	private final RequestHandler cmdSystem;
 
 	private final String controlPath;
 

@@ -35,7 +35,7 @@ import ru.myx.ae3.exec.ExecArgumentsEmpty;
 import ru.myx.ae3.exec.ExecProcess;
 import ru.myx.ae3.exec.ResultHandler;
 import ru.myx.ae3.help.Format;
-import ru.myx.ae3.i3.Handler;
+import ru.myx.ae3.i3.RequestHandler;
 import ru.myx.ae3.i3.web.WebInterface;
 import ru.myx.ae3.report.Report;
 import ru.myx.ae3.serve.Serve;
@@ -75,7 +75,7 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 	
 	private final AuthType authType;
 	
-	private final Handler cmdSystem;
+	private final RequestHandler cmdSystem;
 	
 	private final String controlPath;
 	
@@ -83,7 +83,7 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 	
 	private int fixLocations = 16;
 	
-	private final Handler handler;
+	private final RequestHandler handler;
 	
 	private final int languageMode;
 	
@@ -121,7 +121,7 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 			final ServerDomain domain,
 			final Skinner skinner,
 			final ControlNode<?> node,
-			final Handler handler,
+			final RequestHandler handler,
 			final String alias,
 			final String controlPath,
 			final AuthType authType,
