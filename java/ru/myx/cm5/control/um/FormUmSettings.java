@@ -1,6 +1,6 @@
 /*
  * Created on 15.04.2004
- * 
+ *
  * To change the template for this generated file go to
  * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
@@ -26,21 +26,18 @@ import ru.myx.ae3.control.field.ControlFieldFactory;
 import ru.myx.ae3.control.fieldset.ControlFieldset;
 import ru.myx.ae3.exec.Exec;
 import ru.myx.ae3.help.Convert;
-import ru.myx.ae3.help.Text;
 
-/**
- * @author myx
- * 		
+/** @author myx
+ *
  *         To change the template for this generated type comment go to
- *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments */
 final class FormUmSettings extends AbstractForm<FormUmSettings> {
-	
+
 	private static final ControlLookupStatic LOOKUP_REGISTRATION_MODES = new ControlLookupStatic()
 			.putAppend("0", MultivariantString.getString("Disabled", Collections.singletonMap("ru", "Запрещена")))
 			.putAppend("1", MultivariantString.getString("Paused", Collections.singletonMap("ru", "Приостановлена")))
 			.putAppend("10", MultivariantString.getString("Enabled", Collections.singletonMap("ru", "Разрешена")));
-			
+
 	private static final ControlLookupStatic LOOKUP_PERIOD = new ControlLookupStatic()
 			.putAppend("0", MultivariantString.getString("Disabled", Collections.singletonMap("ru", "Запрещено")))
 			.putAppend("1", MultivariantString.getString("1 month", Collections.singletonMap("ru", "1 месяц")))
@@ -48,7 +45,7 @@ final class FormUmSettings extends AbstractForm<FormUmSettings> {
 			.putAppend("3", MultivariantString.getString("3 months", Collections.singletonMap("ru", "3 месяца")))
 			.putAppend("6", MultivariantString.getString("6 months", Collections.singletonMap("ru", "6 месяцев")))
 			.putAppend("12", MultivariantString.getString("1 year", Collections.singletonMap("ru", "1 год")));
-			
+
 	private static final ControlFieldset<?> FIELDSET = ControlFieldset.createFieldset("Setup")
 			.addField(
 					ControlFieldFactory
@@ -70,10 +67,11 @@ final class FormUmSettings extends AbstractForm<FormUmSettings> {
 							"notifyUserList",
 							MultivariantString.getString("Notify on registration & promote user", Collections.singletonMap("ru", "Нотификация регистрации и промоушена")),
 							null).setFieldVariant("select").setAttribute("lookup", Access.HM_USERS));
-							
+
 	private static final ControlCommand<?> CMD_SAVE = Control.createCommand("save", " OK ").setCommandPermission("setup").setCommandIcon("command-save");
-	
+
 	FormUmSettings() {
+
 		final BaseObject source = Context.getServer(Exec.currentProcess()).getStorage().load("umSettings");
 		assert source != null : "NULL java value";
 		FormUmSettings.FIELDSET.dataRetrieve(source, this.getData());
@@ -82,10 +80,10 @@ final class FormUmSettings extends AbstractForm<FormUmSettings> {
 		this.setAttributeIntern("path", "/usman");
 		this.recalculate();
 	}
-	
+
 	@Override
 	public Object getCommandResult(final ControlCommand<?> command, final BaseObject arguments) {
-		
+
 		if (command == FormUmSettings.CMD_SAVE) {
 			final BaseArray requested = Convert.MapEntry.toCollection(this.getData(), "notifyUserList", null);
 			final List<String> emails = new ArrayList<>();
@@ -105,7 +103,7 @@ final class FormUmSettings extends AbstractForm<FormUmSettings> {
 					emails.add(email);
 				}
 			}
-			this.getData().baseDefine("notifyEmailList", Text.join(emails, ";"));
+			this.getData().baseDefine("notifyEmailList", String.join(";", emails));
 			final BaseObject settings = server.getStorage().load("umSettings");
 			assert settings != null : "NULL java value";
 			if (settings == BaseObject.UNDEFINED) {
@@ -118,16 +116,16 @@ final class FormUmSettings extends AbstractForm<FormUmSettings> {
 		}
 		throw new IllegalArgumentException("Unknown command: " + command.getKey());
 	}
-	
+
 	@Override
 	public ControlCommandset getCommands() {
-		
+
 		return Control.createOptionsSingleton(FormUmSettings.CMD_SAVE);
 	}
-	
+
 	@Override
 	public ControlFieldset<?> getFieldset() {
-		
+
 		return FormUmSettings.FIELDSET;
 	}
 }

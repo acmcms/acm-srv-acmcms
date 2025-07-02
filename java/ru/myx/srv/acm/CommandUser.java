@@ -26,7 +26,6 @@ import ru.myx.ae3.email.EmailSender;
 import ru.myx.ae3.exec.Exec;
 import ru.myx.ae3.exec.ExecProcess;
 import ru.myx.ae3.help.Convert;
-import ru.myx.ae3.help.Text;
 import ru.myx.ae3.i3.RequestHandler;
 import ru.myx.ae3.serve.ServeRequest;
 import ru.myx.cm5.control.um.NodeUM;
@@ -35,16 +34,16 @@ import ru.myx.sapi.UserManagerSAPI;
 
 /** @author myx */
 final class CommandUser {
-	
+
 	private static final String OWNER = "ACM/USER";
-	
+
 	private static final Object EMAIL_VALIDATION_STR = MultivariantString
 			.getString("e-mail address validation", Collections.singletonMap("ru", "подтверждение адреса электронной почты"));
-	
+
 	private static final RequestHandler defaultUserActionRunner = new RuntimeDefaultUserActionRunner();
-	
+
 	private static ReplyAnswer doChangeEmail(final Server server, final EmailSender mta, final ServeRequest query, final BaseObject flags) {
-		
+
 		server.ensureAuthorization(AuthLevels.AL_AUTHORIZED_NORMAL);
 		final AccessUser<?> user = Context.getUser(Exec.currentProcess());
 		final BaseObject rd = query.getParameters();
@@ -110,9 +109,9 @@ final class CommandUser {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	private static ReplyAnswer doChangePassword(final Server server, final ServeRequest query, final BaseObject flags) {
-		
+
 		server.ensureAuthorization(AuthLevels.AL_AUTHORIZED_NORMAL);
 		final ExecProcess process = Exec.currentProcess();
 		final AccessUser<?> user = Context.getUser(process);
@@ -160,9 +159,9 @@ final class CommandUser {
 		// .setContentIdentity( "mwmUserSettings" )
 		;
 	}
-	
+
 	private static ReplyAnswer doForgetPassword(final Server server, final EmailSender mta, final ServeRequest query, final BaseObject flags) {
-		
+
 		final String email = Base.getString(query.getParameters(), "email", "").toLowerCase();
 		flags.baseDefine("Form", "email");
 		if (email.length() > 0) {
@@ -235,9 +234,9 @@ final class CommandUser {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	private static final ReplyAnswer doLogin(final Server server, final boolean useSystemAuth, final ServeRequest query, final ExecProcess process, final BaseObject flags) {
-		
+
 		final Context context = Context.getContext(process);
 		final BaseObject session = context.getSessionData();
 		final BaseObject request = query.getParameters();
@@ -296,9 +295,9 @@ final class CommandUser {
 				.setFlags(flags)//
 				.setPrivate();
 	}
-	
+
 	private static final ReplyAnswer doRegister(final Server server, final ServeRequest query, final ExecProcess process, final BaseObject flags) {
-		
+
 		final BaseObject rd = query.getParameters();
 		final String login = Base.getString(rd, "login", "").trim().toLowerCase();
 		if (login.length() > 0) {
@@ -341,9 +340,9 @@ final class CommandUser {
 				.setFlags(flags)//
 				.setPrivate();
 	}
-	
+
 	private static final ReplyAnswer doSettings(final Server server, final ServeRequest query, final BaseObject flags) {
-		
+
 		server.ensureAuthorization(AuthLevels.AL_AUTHORIZED_NORMAL);
 		final ExecProcess process = Exec.currentProcess();
 		final AccessUser<?> user = Context.getUser(process);
@@ -393,9 +392,9 @@ final class CommandUser {
 				.setFlags(flags)//
 				.setPrivate();
 	}
-	
+
 	private static final ReplyAnswer doUserAction(final Server server, final ServeRequest query) {
-		
+
 		final BaseObject queryParameters = query.getParameters();
 		final String actionID = Base.getString(queryParameters, "action", "").trim();
 		if (actionID.length() == 0) {
@@ -430,9 +429,9 @@ final class CommandUser {
 		}
 		return runner.onQuery(query);
 	}
-	
+
 	private static final void updateUser(final AccessUser<?> user, final BaseObject data) throws Exception {
-		
+
 		final BaseObject sourceData = new BaseNativeObject();
 		final String language;
 		if (data != null) {
@@ -450,16 +449,16 @@ final class CommandUser {
 		final ControlFieldset<?> cfd = NodeUM.getCommonFieldsDefinition();
 		final Map<String, String> validation = cfd.dataValidate(sourceData);
 		if (validation != null && validation.size() > 0) {
-			throw new IllegalArgumentException("+" + Text.join(validation.keySet(), ","));
+			throw new IllegalArgumentException("+" + String.join(",", validation.keySet()));
 		}
 		cfd.dataStore(sourceData, registrationData);
 		user.setLanguage(language);
 		user.setProfile(registrationData);
 		user.commit();
 	}
-	
+
 	public static final ReplyAnswer handleRequest(final Server server, final RuntimeEnvironment rt, final boolean useSystemAuth, final ServeRequest query) {
-		
+
 		final String path = query.getResourceIdentifier();
 		if (path.endsWith(".user")) {
 			final ExecProcess process = Exec.currentProcess();

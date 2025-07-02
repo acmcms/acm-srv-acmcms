@@ -33,7 +33,6 @@ import ru.myx.ae3.email.Email;
 import ru.myx.ae3.exec.Exec;
 import ru.myx.ae3.exec.ExecProcess;
 import ru.myx.ae3.exec.ProgramPart;
-import ru.myx.ae3.help.Text;
 import ru.myx.sapi.UserManagerSAPI;
 
 /** Title: Base Implementations Description: Copyright: Copyright (c) 2001 Company: -= MyX =-
@@ -43,34 +42,34 @@ import ru.myx.sapi.UserManagerSAPI;
 public class NodeUM extends AbstractNode {
 
 	private static final BaseObject CC_STR_USER_FIELDS = MultivariantString.getString("Common user fields", Collections.singletonMap("ru", "Общие поля пользователя"));
-	
+
 	private static final Object nodeTitle = MultivariantString.getString("User Management", Collections.singletonMap("ru", "Управление пользователями"));
-	
+
 	private static final ControlCommand<?> CMD_CREATE_USER = Control
 			.createCommand("new_user", MultivariantString.getString("Add new user...", Collections.singletonMap("ru", "Новый пользователь..."))).setCommandPermission("create")
 			.setCommandIcon("command-create-user");
-	
+
 	private static final ControlCommand<?> CMD_CREATE_GROUP = Control
 			.createCommand("new_group", MultivariantString.getString("Add new group...", Collections.singletonMap("ru", "Новая группа..."))).setCommandPermission("create")
 			.setCommandIcon("command-create-group");
-	
+
 	private static final ControlCommand<?> CMD_UM_SEARCH = Control
 			.createCommand("search", MultivariantString.getString("Search users", Collections.singletonMap("ru", "Поиск пользователей"))).setCommandPermission("view")
 			.setCommandIcon("command-search-users");
-	
+
 	private static final ControlCommand<?> CMD_UM_USER_FIELDS = Control.createCommand("cuf", NodeUM.CC_STR_USER_FIELDS).setCommandPermission("setup")
 			.setCommandIcon("command-edit");
-	
+
 	private static final ControlCommand<?> CMD_UM_SETTINGS = Control
 			.createCommand("settings", MultivariantString.getString("User management settings", Collections.singletonMap("ru", "Настройки управления пользователями")))
 			.setCommandPermission("setup").setCommandIcon("command-setup");
-	
+
 	private static final ControlCommand<?> CMD_UM_GET_CSV = Control
 			.createCommand("get_csv", MultivariantString.getString("Download user database", Collections.singletonMap("ru", "Выгрузить базу пользователей")))
 			.setCommandPermission("view").setCommandIcon("command-download-csv");
-	
+
 	private static final ControlCommandset NODE_COMMANDS = Control.createOptions();
-	
+
 	static {
 		NodeUM.NODE_COMMANDS.addAll(Arrays.asList(new ControlCommand<?>[]{
 				NodeUM.CMD_CREATE_USER, NodeUM.CMD_CREATE_GROUP, NodeUM.CMD_UM_SEARCH, NodeUM.CMD_UM_GET_CSV, NodeUM.CMD_UM_USER_FIELDS, NodeUM.CMD_UM_SETTINGS,
@@ -172,17 +171,6 @@ public class NodeUM extends AbstractNode {
 	}
 
 	/** @return string */
-	static final String getMessageRegistrationSucceedSubject() {
-
-		final BaseObject data = Context.getServer(Exec.currentProcess()).getStorage().load("um-register.user");
-		assert data != null : "NULL java value";
-		if (null == data.baseGetOwnProperty("messageRegistrationSucceedSubject")) {
-			return NodeTemplates.M_REGISTRATION_SUCCEED_SUBJECT.toString();
-		}
-		return data.baseGet("messageRegistrationSucceedSubject", BaseObject.UNDEFINED).toString();
-	}
-
-	/** @return string */
 	public static final String getMessageWrongPassword() {
 
 		final BaseObject data = Context.getServer(Exec.currentProcess()).getStorage().load("um-change-password.user");
@@ -202,14 +190,6 @@ public class NodeUM extends AbstractNode {
 			return NodeTemplates.M_WRONG_PASSWORD_LENGTH.toString();
 		}
 		return data.baseGet("messageWrongPasswordLength", BaseObject.UNDEFINED).toString();
-	}
-
-	/** @return string */
-	static final String getRegistrationNotificationEmailList() {
-
-		final BaseObject m = Context.getServer(Exec.currentProcess()).getStorage().load("umSettings");
-		assert m != null : "NULL java value";
-		return Base.getString(m, "notifyEmailList", "");
 	}
 
 	/** @param name
@@ -267,7 +247,7 @@ public class NodeUM extends AbstractNode {
 		final ControlFieldset<?> cfd = NodeUM.getCommonFieldsDefinition();
 		final Map<String, String> validation = cfd.dataValidate(sourceData);
 		if (validation != null && validation.size() > 0) {
-			throw new IllegalArgumentException("+" + Text.join(validation.keySet(), ","));
+			throw new IllegalArgumentException("+" + String.join(",", validation.keySet()));
 		}
 		cfd.dataStore(sourceData, registrationData);
 		final AccessManager accessManager = server.getAccessManager();
@@ -366,6 +346,25 @@ public class NodeUM extends AbstractNode {
 		NodeUM.sendRegistrationEmail(user.getEmail(), user.getLogin(), password);
 	}
 
+	/** @return string */
+	static final String getMessageRegistrationSucceedSubject() {
+
+		final BaseObject data = Context.getServer(Exec.currentProcess()).getStorage().load("um-register.user");
+		assert data != null : "NULL java value";
+		if (null == data.baseGetOwnProperty("messageRegistrationSucceedSubject")) {
+			return NodeTemplates.M_REGISTRATION_SUCCEED_SUBJECT.toString();
+		}
+		return data.baseGet("messageRegistrationSucceedSubject", BaseObject.UNDEFINED).toString();
+	}
+
+	/** @return string */
+	static final String getRegistrationNotificationEmailList() {
+
+		final BaseObject m = Context.getServer(Exec.currentProcess()).getStorage().load("umSettings");
+		assert m != null : "NULL java value";
+		return Base.getString(m, "notifyEmailList", "");
+	}
+
 	static void sendRegistrationEmail(final String email, final String login, final String password) {
 
 		String emailSubject = NodeUM.getMessageRegistrationSucceedSubject();
@@ -405,13 +404,13 @@ public class NodeUM extends AbstractNode {
 		object.baseDefine("dd", source);
 		server.getStorage().savePersistent("um-commonFields.def", data);
 	}
-	
+
 	private final NodeTemplates TemplatesContext = new NodeTemplates();
-	
+
 	private final NodeGroups GroupsContext = new NodeGroups();
-	
+
 	private final NodeUsers UsersContext = new NodeUsers();
-	
+
 	private final NodeUsers UserAContext = new NodeUsersAlmost();
 
 	@Override
@@ -439,10 +438,10 @@ public class NodeUM extends AbstractNode {
 					NodeUM.CC_STR_USER_FIELDS, //
 					NodeUM.getCommonFieldsDefinition(),
 					new Function<ControlFieldset<?>, Object>() {
-						
+
 						@Override
 						public Object apply(final ControlFieldset<?> fieldset) {
-							
+
 							final String serialized = ControlFieldset.serializeFieldset(fieldset, false);
 							NodeUM.storeCommonFieldsDefinition(serialized);
 							return null;
