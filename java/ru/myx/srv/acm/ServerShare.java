@@ -43,80 +43,78 @@ import ru.myx.ae3.serve.ServeRequest;
 import ru.myx.ae3.skinner.Skinner;
 import ru.myx.cm5.control.sharing.Sharing;
 
-/**
- * @author myx
+/** @author myx
  *
  *
  *         To change the template for this generated type comment go to
- *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
+ *         Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments */
 final class ServerShare extends FilterZoneServer implements ServerRT3 {
-	
+
 	private static final Set<String> KEEP_TYPES = new HashSet<>(Arrays.asList(new String[]{
 			"image/gif", "image/png", "image/jpeg", "image/pjpeg", "text/css", "text/javascript",
 	}));
-	
+
 	private static final ReplyAnswer ROBOTS_PRIVATE = Reply.string("SRVDOMAIN", null, "User-Agent: *\nDisallow: /");
-	
+
 	private static final ReplyAnswer ROBOTS_PUBLIC = Reply.string("SRVDOMAIN", null, "User-Agent: *\nAllow: /");
-	
+
 	private static final boolean checkKeepType(final String contentType) {
-		
+
 		final int index = contentType.indexOf(';');
 		if (index == -1) {
 			return ServerShare.KEEP_TYPES.contains(contentType);
 		}
 		return ServerShare.KEEP_TYPES.contains(contentType.substring(0, index).trim());
 	}
-	
+
 	private final AccessType accessType;
-	
+
 	private final String alias;
-	
+
 	private final AuthType authType;
-	
+
 	private final RequestHandler cmdSystem;
-	
+
 	private final String controlPath;
-	
+
 	private final ServerDomain domain;
-	
+
 	private int fixLocations = 16;
-	
+
 	private final RequestHandler handler;
-	
+
 	private final int languageMode;
-	
+
 	private final String languageName;
-	
+
 	private final Share<?>[] nearest;
-	
+
 	private final ControlNode<?> node;
-	
+
 	private final String owner;
-	
+
 	private final boolean requireAuthorization;
-	
+
 	private final boolean requireSecure;
-	
+
 	private final boolean requireUnSecure;
-	
+
 	private final ReplyAnswer robots;
-	
+
 	private final ExecProcess rootContext;
-	
+
 	private final SecureType secureType;
-	
+
 	private final boolean shareTesting;
-	
+
 	private final Skinner skinner;
-	
+
 	private final String splashName;
-	
+
 	private final TransferDescription traffic;
-	
+
 	private final Share<?>[] variants;
-	
+
 	ServerShare(
 			final ServerDomain domain,
 			final Skinner skinner,
@@ -132,6 +130,7 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 			final String splashName,
 			final Share<?>[] variants,
 			final Share<?>[] nearest) {
+		
 		super(domain);
 		assert domain != null : "Domain is NULL";
 		this.domain = domain;
@@ -198,10 +197,10 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 				break;
 		}
 	}
-	
+
 	@Override
 	public final boolean absorb(final ServeRequest query) {
-		
+
 		if (Report.MODE_DEBUG) {
 			Report.debug(this.owner, "Share: " + this + ", Query:" + query);
 		}
@@ -249,8 +248,8 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 									query,
 									false,
 									String.valueOf(initial));
-						query.getResponseTarget()
-								.apply(reply//
+						query.getResponseTarget().apply(
+								reply//
 										.setPrivate()//
 										.setSessionID(context.getSessionId()) //
 						);
@@ -264,12 +263,11 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 						session.baseDefine("initial", query.getResourcePrefix() + query.getResourceIdentifier());
 					}
 					try {
-						final ReplyAnswer reply = Reply
-								.binary(
-										"SPLASH", //
-										query,
-										Transfer.createBuffer(ServerShare.class.getResourceAsStream(key + ".html")),
-										key + ".html")//
+						final ReplyAnswer reply = Reply.binary(
+								"SPLASH", //
+								query,
+								Transfer.createBuffer(ServerShare.class.getResourceAsStream(key + ".html")),
+								key + ".html")//
 								.setPrivate()//
 								.setSessionID(context.getSessionId());
 						query.getResponseTarget().apply(reply);
@@ -290,9 +288,10 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 		Serve.checkParsePostParameters(query);
 		if (this.requireAuthorization) {
 			try {
-				this.ensureAuthorization(this.accessType == AccessType.CLOSED
-					? AuthLevels.AL_AUTHORIZED_HIGH
-					: this.authType.getLevel());
+				this.ensureAuthorization(
+						this.accessType == AccessType.CLOSED
+							? AuthLevels.AL_AUTHORIZED_HIGH
+							: this.authType.getLevel());
 			} catch (final AbstractReplyException reply) {
 				WebInterface.sendReply(query, reply.getReply());
 				return true;
@@ -308,18 +307,19 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 				query.setLanguage(this.getLanguage(query.getLanguage()));
 			}
 		} else {
-			query.setLanguage(this.languageMode == Share.LM_LANG
-				? this.languageName
-				: this.getLanguage(query.getLanguage()));
+			query.setLanguage(
+					this.languageMode == Share.LM_LANG
+						? this.languageName
+						: this.getLanguage(query.getLanguage()));
 		}
-		
+
 		ReplyAnswer response;
-		
+
 		try {
 			// set the sharedObject
 			query.setAttachment(this.node.getEntry());
 			query.setSettings(this.skinner.getSkinSettings());
-			
+
 			response = this.cmdSystem.onQuery(query);
 			if (response == null) {
 				response = CommandUser.handleRequest(this, this.domain.rt, this.authType != AuthType.SITEFORM, query);
@@ -330,11 +330,10 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 							response = this.handler.onQuery(query);
 						}
 						if (response == null) {
-							response = Reply
-									.string(
-											"RT3/SHARE", //
-											query,
-											"no response! original url: " + query.getUrl())//
+							response = Reply.string(
+									"RT3/SHARE", //
+									query,
+									"no response! original url: " + query.getUrl())//
 									.setCode(Reply.CD_UNKNOWN)//
 									.setNoCaching();
 						}
@@ -345,18 +344,16 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 			response = e.getReply().addAttribute("via", "ACM");
 		} catch (final Exception e) {
 			Report.exception("SRV_SHARE", "share: " + this.alias + ", unhandled exception, sent as reply", e);
-			response = Reply
-					.string(
-							"RT3/CTX", //
-							query,
-							Format.Throwable.toText(e))//
+			response = Reply.string(
+					"RT3/CTX", //
+					query,
+					Format.Throwable.toText(e))//
 					.setCode(Reply.CD_EXCEPTION)//
 					.setNoCaching()//
 					.setPrivate();
 		} catch (final OutOfMemoryError e) {
 			try {
 				this.parent.getCache().clear();
-				System.runFinalization();
 				System.gc();
 				Report.error(this.owner, "Out of memory error - cache cleared, gc started", "Redirection request was sent to a client");
 			} catch (final OutOfMemoryError ee) {
@@ -364,20 +361,18 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 			} catch (final Throwable t) {
 				// empty
 			}
-			response = Reply
-					.redirect(
-							"RT3/CTX_MEM", //
-							query,
-							false,
-							this.fixUrl(""))//
+			response = Reply.redirect(
+					"RT3/CTX_MEM", //
+					query,
+					false,
+					this.fixUrl(""))//
 					.setNoCaching()//
 					.setPrivate();
 		} catch (final Throwable e) {
-			response = Reply
-					.string(
-							"RT3/CTX", //
-							query,
-							Format.Throwable.toText(e))//
+			response = Reply.string(
+					"RT3/CTX", //
+					query,
+					Format.Throwable.toText(e))//
 					.setCode(Reply.CD_EXCEPTION)//
 					.setNoCaching()//
 					.setPrivate();
@@ -431,10 +426,10 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 		WebInterface.sendReply(query, response);
 		return true;
 	}
-	
+
 	@Override
 	public final AccessUser<?> ensureAuthorization(final int level) {
-		
+
 		final AuthType authType = this.authType;
 		if (authType == AuthType.SITEFORM) {
 			final String preCheck = Base.getString(this.skinner.getSkinSettings(), "authEscalationHandler", "").trim();
@@ -456,16 +451,18 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 					throw new Error("AUTH fail: " + errorText);
 				}
 			}
-			return this.parent.ensureAuthorization(this.accessType == AccessType.CLOSED
-				? Math.max(level, authType.getLevel())
-				: level);
+			return this.parent.ensureAuthorization(
+					this.accessType == AccessType.CLOSED
+						? Math.max(level, authType.getLevel())
+						: level);
 		}
 		if (authType == AuthType.SYSTEM) {
 			final ExecProcess process = Exec.currentProcess();
 			try {
-				return Context.getContext(process).ensureAuthorization(this.accessType == AccessType.CLOSED
-					? Math.max(level, authType.getLevel())
-					: level);
+				return Context.getContext(process).ensureAuthorization(
+						this.accessType == AccessType.CLOSED
+							? Math.max(level, authType.getLevel())
+							: level);
 			} catch (final InvalidCredentials e) {
 				return null;
 			}
@@ -473,10 +470,10 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 		assert false : "its either SITEFORM, either SYSTEM. even NULL is invalid here, authType=" + authType;
 		return this.parent.ensureAuthorization(level);
 	}
-	
+
 	@Override
 	public final String fixLocation(final ExecProcess process, final String path, final boolean absolute) {
-		
+
 		if (absolute) {
 			return this.parent.fixLocation(process, path, true);
 		}
@@ -538,10 +535,10 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 		}
 		return this.parent.fixLocation(process, path, false);
 	}
-	
+
 	@Override
 	public final String fixUrl(final String url) {
-		
+
 		if (this.languageMode == Share.LM_AUTO) {
 			return this.domain.fixUrl(url);
 		}
@@ -569,9 +566,7 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 			return url;
 		}
 		try {
-			/**
-			 * context relative?
-			 */
+			/** context relative? */
 			final String base = Context.getRequest(Exec.currentProcess()).getUrl();
 			final URL baseUrl = new URL(base);
 			final URL relativeUrl = new URL(baseUrl, url);
@@ -580,10 +575,10 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	@Override
 	public final String fixUrl(final String url, final String language) {
-		
+
 		if (this.languageMode == Share.LM_AUTO) {
 			return this.domain.fixUrl(url, language);
 		}
@@ -627,64 +622,64 @@ final class ServerShare extends FilterZoneServer implements ServerRT3 {
 		assert false : "unsupported url (context relative?): " + url + ", language=" + language;
 		return url;
 	}
-	
+
 	@Override
 	public String getControlBase() {
-		
+
 		return this.controlPath;
 	}
-	
+
 	@Override
 	public final String getLanguageDefault() {
-		
+
 		return this.languageName;
 	}
-	
+
 	@Override
 	public final ExecProcess getRootContext() {
-		
+
 		return this.rootContext;
 	}
-	
-	protected final Skinner getSkin() {
-		
-		return this.skinner;
-	}
-	
+
 	@Override
 	public Skinner getSkinner(final String name) {
-		
+
 		return this.parent.getSkinner(name);
 	}
-	
+
 	@Override
 	public Collection<String> getSkinnerNames() {
-		
+
 		return this.parent.getSkinnerNames();
 	}
-	
+
 	@Override
 	public boolean isControllerServer() {
-		
+
 		return this.domain.isControllerServer();
 	}
-	
+
 	@Override
 	public Skinner registerSkinner(final String name, final Skinner skinner) {
-		
+
 		return this.domain.registerSkinner(name, skinner);
 	}
-	
+
 	@Override
 	public String registerUser(final String guid, final String login, final String lowerCase, final String passwordToUse, final BaseObject data) throws Exception {
-		
+
 		return this.domain.registerUser(guid, login, lowerCase, passwordToUse, data);
 	}
-	
+
 	@Override
 	public String toString() {
-		
+
 		return "SHARE( alias=" + this.alias + ", handler=" + this.handler + ", renderer=" + this.skinner + ", authType=" + this.authType.name() + ", accessType="
 				+ this.accessType.name() + ", language=" + this.languageName + " )";
+	}
+
+	protected final Skinner getSkin() {
+
+		return this.skinner;
 	}
 }
