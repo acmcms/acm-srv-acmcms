@@ -1,1 +1,3 @@
 # acm-srv-acmcms
+
+The AxiomCMS server itself — `ru.myx.srv.acm.Main`/`ServerRT3`/`ApplicationFactory` boot and run it, `ServerDomain`/`ServerDomainController` handle multi-domain hosting, `SqlManager`/`SqlConnectionInfo` manage DB pools. `ru.myx.cm5.control` holds the admin-backend forms/nodes (SQL table browse/query/structure, site/system config, plugin management), `ru.myx.cm5.control.personal` the per-user area (inbox, history, password), `ru.myx.cm5.control.sharing` the content-sharing system, and `ru.myx.cm5.types` the content-type registry. Requires `acm-base-api`, `ae3.api`, `ae3.sdk`, `ae3.sys.pkg.i3.web`, `ae3.sys.pkg.l2.tgt.xls`, `ae3.sys.pkg.i3.email`, `ae3.pkg.lib.jxl`.
