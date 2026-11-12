@@ -1,6 +1,13 @@
 /*
  * Created on 14.06.2004
  */
+/*
+ * Distinct from the two forms in this package: they write the profile, this
+ * actor alone decides which of them a user is offered. The setup command is
+ * added only when the skinner bound to the live request exposes a non-empty
+ * settings fieldset, so a user sees one command or two depending on the skin
+ * the request resolved to, never on a fixed menu.
+ */
 package ru.myx.cm5.skin;
 
 import java.util.Collections;
